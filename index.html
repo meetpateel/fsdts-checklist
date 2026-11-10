@@ -1,0 +1,544 @@
+<title>FSDTS Product Catalog Checklist</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@600;800&family=Public+Sans:wght@400;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: one narrow work-order column; sticky bar with progress + step tabs; one step shown at a time */
+:root{
+  --bg:#F3F5F8; --surface:#FFFFFF; --ink:#1B2330; --muted:#5A6577; --line:#D9DFE7;
+  --accent:#1D5A9E; --accent-soft:#E3ECF7; --ok:#2C6E4C; --ok-soft:#E2F1E8;
+  --warn:#9A5A12; --warn-soft:#FBEFD9; --bad:#B42318; --chip:#EEF1F5;
+  --f-head:"Archivo","Segoe UI",system-ui,sans-serif; --f-body:"Public Sans","Segoe UI",system-ui,sans-serif;
+  --f-mono:"IBM Plex Mono",Consolas,"Courier New",monospace;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#12161C; --surface:#1A2029; --ink:#E6EAF0; --muted:#9AA5B5; --line:#2C3542;
+  --accent:#7FB0EA; --accent-soft:#1E2E44; --ok:#7CC79E; --ok-soft:#18301F;
+  --warn:#E8B26A; --warn-soft:#3A2C16; --bad:#F2877D; --chip:#232B36; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#12161C; --surface:#1A2029; --ink:#E6EAF0; --muted:#9AA5B5; --line:#2C3542;
+  --accent:#7FB0EA; --accent-soft:#1E2E44; --ok:#7CC79E; --ok-soft:#18301F;
+  --warn:#E8B26A; --warn-soft:#3A2C16; --bad:#F2877D; --chip:#232B36; color-scheme:dark}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font:15px/1.55 var(--f-body)}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:10;background:var(--surface)}
+.wrap{max-width:860px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+header.top{padding-block:28px 8px}
+h1{font:800 clamp(24px,4vw,32px)/1.15 var(--f-head);margin:0 0 6px;text-wrap:balance;letter-spacing:-.01em}
+h2{font:700 21px/1.25 var(--f-head);margin:0;text-wrap:balance}
+h3{font:600 16px/1.35 var(--f-body);margin:0}
+.lede{color:var(--muted);margin:0;max-width:65ch}
+.bar{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--surface);border-bottom:1px solid var(--line);margin-top:16px}
+.bar .wrap{padding-block:10px 0}
+.prog{display:flex;align-items:center;gap:12px;font-size:14px}
+.brand{font:800 14px/1 var(--f-head);white-space:nowrap;letter-spacing:-.005em}
+.meter{flex:1;height:8px;background:var(--chip);border-radius:99px;overflow:hidden}
+.meter i{display:block;height:100%;background:var(--ok);width:0;transition:width .3s}
+.prog strong{font-variant-numeric:tabular-nums;white-space:nowrap}
+.tabs{display:flex;gap:4px;overflow-x:auto;margin-top:8px;scrollbar-width:thin}
+.tab{flex:0 0 auto;border:0;background:none;color:var(--muted);font:600 13.5px var(--f-body);padding:9px 12px 11px;border-bottom:3px solid transparent;cursor:pointer;white-space:nowrap}
+.tab:hover{color:var(--ink)}
+.tab[aria-selected="true"]{color:var(--accent);border-bottom-color:var(--accent)}
+.tab .n{font-variant-numeric:tabular-nums;font-weight:400;margin-left:4px;font-size:12px}
+.tab.complete .n{color:var(--ok);font-weight:700}
+.tab:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible,a:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+main{padding-block:22px 60px}
+.panel-head{display:flex;flex-direction:column;gap:4px;margin-bottom:16px}
+.panel-head p{margin:0;color:var(--muted);max-width:65ch}
+.rule{background:var(--warn-soft);color:var(--ink);padding:10px 14px;border-radius:8px;margin:0 0 16px;font-size:14px}
+.rule b{color:var(--warn)}
+.card .rule{margin:0}
+.cards{display:flex;flex-direction:column;gap:14px}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:16px 18px;display:flex;flex-direction:column;gap:10px;min-width:0}
+.card.done{border-color:var(--ok);background:linear-gradient(var(--ok-soft),var(--ok-soft)) top/100% 4px no-repeat,var(--surface)}
+.card-top{display:flex;gap:12px;align-items:flex-start}
+.card-body{display:flex;flex-direction:column;gap:10px}
+.card.done:not(.open) .card-body{display:none}
+.card.done:not(.open){padding-block:12px}
+.card-side{display:flex;align-items:center;gap:8px;flex:0 0 auto;flex-wrap:wrap;justify-content:flex-end}
+.linkbtn{background:none;border:0;color:var(--accent);font:600 13px var(--f-body);cursor:pointer;padding:6px 4px;border-radius:4px}
+.linkbtn:hover{text-decoration:underline;text-underline-offset:3px}
+.panel-top{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;flex-wrap:wrap}
+button.primary{font:600 14px var(--f-body);padding:9px 16px;border-radius:6px;border:1px solid var(--accent);background:var(--accent);color:var(--surface);cursor:pointer}
+button.ghost{font:600 13.5px var(--f-body);padding:8px 14px;border-radius:6px;border:1px solid var(--line);background:var(--surface);color:var(--ink);cursor:pointer}
+button.ghost.armed{border-color:var(--bad);color:var(--bad)}
+.check{display:flex;align-items:center;gap:6px;flex:0 0 auto;font-size:13px;font-weight:600;color:var(--muted);cursor:pointer;padding:4px 10px;border:1px solid var(--line);border-radius:99px;user-select:none}
+.check input{width:17px;height:17px;accent-color:var(--ok);margin:0}
+.card.done .check{color:var(--ok);border-color:var(--ok)}
+.card-title{flex:1;min-width:0;display:flex;flex-direction:column;gap:4px}
+.rows{display:flex;gap:5px;flex-wrap:wrap}
+.row{font:500 11.5px var(--f-mono);background:var(--chip);color:var(--muted);padding:1px 7px;border-radius:4px}
+.path{font:500 13px/1.5 var(--f-mono);background:var(--accent-soft);color:var(--ink);padding:8px 12px;border-radius:6px;overflow-wrap:anywhere}
+.path span{color:var(--muted);font-family:var(--f-body);font-size:12px;font-weight:600;letter-spacing:.05em;text-transform:uppercase;margin-right:6px}
+ol.steps{margin:0;padding-left:20px;display:flex;flex-direction:column;gap:3px;font-size:14.5px}
+.copybox{border:1px solid var(--line);border-radius:8px;overflow:hidden}
+.copybox-head{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:6px 8px 6px 12px;background:var(--chip);font-size:12.5px;color:var(--muted);flex-wrap:wrap}
+.count{font-variant-numeric:tabular-nums}
+.count.over{color:var(--bad);font-weight:700}
+.copybox pre{margin:0;padding:10px 12px;font:14px/1.55 var(--f-body);white-space:pre-wrap;overflow-wrap:anywhere;color:var(--ink)}
+.blank{background:var(--warn-soft);color:var(--warn);font-weight:700;padding:0 4px;border-radius:3px;white-space:nowrap}
+button.copy{font:600 13px var(--f-body);border:1px solid var(--accent);background:var(--accent);color:var(--surface);padding:5px 12px;border-radius:6px;cursor:pointer}
+button.copy:disabled{background:none;color:var(--muted);border-color:var(--line);cursor:not-allowed}
+button.copy.copied{background:var(--ok);border-color:var(--ok)}
+.status{font-size:14px;padding:9px 12px;border-radius:6px}
+.status.wait{background:var(--warn-soft);color:var(--warn);font-weight:600}
+.status.skip{background:var(--ok-soft);color:var(--ok);font-weight:600}
+.note{font-size:13.5px;color:var(--muted);margin:0}
+details.problem summary{display:inline-flex;align-items:center;font:600 13px var(--f-body);color:var(--muted);cursor:pointer;padding:5px 12px;border:1px solid var(--line);border-radius:6px;list-style:none}
+details.problem summary::-webkit-details-marker{display:none}
+details.problem summary:hover{color:var(--ink);border-color:var(--muted)}
+details.problem input{width:100%;margin-top:6px}
+input[type=text],input[type=number],select{font:15px var(--f-body);color:var(--ink);background:var(--surface);border:1px solid var(--line);border-radius:6px;padding:7px 10px}
+input[type=number]{width:90px}
+.facts{display:flex;flex-direction:column;gap:18px}
+.fgroup{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:16px 18px}
+.fgroup h3{margin-bottom:10px}
+.fact{display:grid;grid-template-columns:1fr auto;gap:8px 16px;align-items:center;padding:9px 0;border-top:1px solid var(--line)}
+.fact:first-of-type{border-top:0}
+.fact label.q{font-size:14.5px}
+.fact .q small{display:block;color:var(--muted);font-size:12.5px}
+.fact.missing label.q::after{content:" - needed";color:var(--warn);font-size:12px;font-weight:700}
+.fact .q small.src{color:var(--ok)}
+.fact .q small.how{color:var(--warn);font-weight:600}
+.pri{font:700 10.5px/1.6 var(--f-body);color:var(--bad);border:1px solid var(--bad);padding:0 6px;border-radius:4px;text-transform:uppercase;letter-spacing:.05em;white-space:nowrap;vertical-align:1px}
+.parts{display:flex;flex-direction:column;gap:16px}
+.part{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:16px 18px;display:flex;flex-direction:column;gap:8px}
+.part-head{display:flex;justify-content:space-between;align-items:baseline;gap:12px;flex-wrap:wrap}
+.mins{font:600 13px var(--f-body);color:var(--muted);font-variant-numeric:tabular-nums}
+.screen{margin-top:6px}
+.screen-head{display:flex;justify-content:space-between;gap:10px;font-size:13.5px;padding:6px 0;border-bottom:2px solid var(--line)}
+.screen-head span{color:var(--muted);font-variant-numeric:tabular-nums}
+.alist{list-style:none;margin:0;padding:0}
+.alist li{border-bottom:1px solid var(--line)}
+.alist li:last-child{border-bottom:0}
+.alist a{display:grid;grid-template-columns:8rem 1fr;gap:12px;align-items:center;padding:9px 2px;color:var(--ink);text-decoration:none;font-size:14.5px}
+.alist a:hover > span:last-child{color:var(--accent);text-decoration:underline}
+.chip{font:600 12px/1.4 var(--f-body);padding:2px 9px;border-radius:99px;justify-self:start;white-space:nowrap;max-width:100%;overflow:hidden;text-overflow:ellipsis}
+.chip.ok{background:var(--ok-soft);color:var(--ok)}
+.chip.wait{background:var(--warn-soft);color:var(--warn)}
+.chip.todo{background:var(--chip);color:var(--muted)}
+.chip.opt{background:none;border:1px dashed var(--line);color:var(--muted)}
+details.fgroup summary{cursor:pointer;display:flex;justify-content:space-between;align-items:baseline;gap:10px;flex-wrap:wrap;list-style:none}
+details.fgroup summary::-webkit-details-marker{display:none}
+details.fgroup summary h3::before{content:"";display:inline-block;width:7px;height:7px;border-right:2px solid var(--muted);border-bottom:2px solid var(--muted);transform:rotate(-45deg);margin:0 12px 2px 2px;transition:transform .15s ease-out}
+details.fgroup[open] summary h3::before{transform:rotate(45deg)}
+details.fgroup[open] summary{margin-bottom:10px}
+@media (max-width:560px){.alist a{grid-template-columns:1fr;gap:4px}}
+.before{background:var(--accent-soft);border-radius:10px;padding:12px 16px;margin:0 0 16px;font-size:14px}
+.before ul{margin:4px 0 0;padding-left:20px;display:flex;flex-direction:column;gap:3px}
+.before code{font:500 13px var(--f-mono);overflow-wrap:anywhere}
+::placeholder{color:var(--muted);opacity:1}
+::selection{background:var(--accent-soft);color:var(--ink)}
+input,textarea,select{caret-color:var(--accent)}
+input[type=radio],input[type=checkbox]{accent-color:var(--accent)}
+html{scrollbar-color:var(--line) var(--bg)}
+.seg{display:inline-flex;border:1px solid var(--line);border-radius:6px;overflow:hidden}
+.seg label{padding:6px 12px;font-size:13.5px;cursor:pointer;border-left:1px solid var(--line)}
+.seg label:first-child{border-left:0}
+.seg input{position:absolute;opacity:0;pointer-events:none}
+.seg label:has(input:checked){background:var(--accent);color:var(--surface);font-weight:600}
+.seg label:has(input:focus-visible){outline:2px solid var(--accent);outline-offset:-2px}
+.unit{color:var(--muted);font-size:13px;margin-left:6px}
+.nav{display:flex;justify-content:space-between;gap:10px;margin-top:22px;flex-wrap:wrap}
+.nav button{font:600 14px var(--f-body);padding:9px 16px;border-radius:6px;border:1px solid var(--line);background:var(--surface);color:var(--ink);cursor:pointer}
+.nav button.next{background:var(--accent);border-color:var(--accent);color:var(--surface)}
+.skiplist{font-size:14px;color:var(--muted);background:var(--surface);border:1px dashed var(--line);border-radius:10px;padding:14px 18px;margin-top:24px}
+.skiplist p{margin:0 0 6px}
+textarea#report{width:100%;min-height:260px;font:13px/1.5 var(--f-mono);color:var(--ink);background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:12px}
+a{color:var(--accent)}
+.live li{margin-bottom:6px}
+.kw{font:500 13px var(--f-mono);background:var(--chip);padding:0 5px;border-radius:3px}
+@media (max-width:560px){.fact{grid-template-columns:1fr}.card{padding:14px}.card-top{flex-direction:column-reverse}}
+@media (max-width:560px),(pointer:coarse){
+  .tab,button.copy,.nav button,button.primary,button.ghost,.check,details.problem summary,.seg label,.linkbtn,input[type=text],input[type=number],select{min-height:44px}
+  .seg label,.check{display:inline-flex;align-items:center}
+  .alist a{min-height:44px}
+  .brand{display:none}
+}
+@media (prefers-reduced-motion:reduce){.meter i,details.fgroup summary h3::before{transition:none}}
+</style>
+
+<header class="top wrap" id="intro">
+  <h1>FSDTS Product Catalog Checklist</h1>
+  <p class="lede">Updates for TownePlace Suites by Marriott Sioux Falls (FSDTS) on Marriott.com. Every change here is in Product Catalog, and every text is ready to copy. Plan on about an hour. You can stop and come back: this page remembers your progress in this browser.</p>
+</header>
+
+<div class="bar">
+  <div class="wrap">
+    <div class="prog"><span class="brand">FSDTS checklist</span><div class="meter" aria-hidden="true"><i id="meter"></i></div><strong id="progtext">0 of 0 done</strong></div>
+    <nav class="tabs" id="tabs" role="tablist" aria-label="Steps"></nav>
+  </div>
+</div>
+
+<main class="wrap" id="main"></main>
+
+<script>
+const LS = "fsdts-checklist-v1";
+let S = {facts:{}, done:{}, notes:{}, tab:0, name:""};
+try { const raw = localStorage.getItem(LS); if (raw) S = Object.assign(S, JSON.parse(raw)); } catch (e) {}
+const save = () => { try { localStorage.setItem(LS, JSON.stringify(S)); } catch (e) {} };
+const esc = s => String(s).replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+
+/* ---------- Quick checks facts ---------- */
+const RESTS = [["ruby","Ruby Tuesday"],["chevys","Chevys Fresh Mex"],["granite","Granite City Food & Brewery"],["carinos","Johnny Carino's"],["lobster","Red Lobster"]];
+const RSRC = {
+  ruby:"Public listings show it open at 2425 S. Shirley Ave (renovated 2019).",
+  chevys:"Closed for a remodel in January 2026, then reopened with new management at 2801 S. Louise Ave.",
+  granite:"Still listed and taking OpenTable bookings at 2620 S. Louise Ave. The chain went through bankruptcy, so this is the one most worth a call: 605-362-0000.",
+  carinos:"Still listed at 2310 S. Louise Ave, no closure news found.",
+  lobster:"Survived the 2024 Red Lobster closures and was hiring in 2026 (3901 W. 41st St).",
+};
+const FACTS = [
+  {title:"Drive minutes from the hotel", hint:"Already filled in from road routing (4545 W. Homefield Dr.), rounded up a little for daytime traffic. Change any number you know is off.", items:[
+    {k:"hosp", q:"Hospitals", sub:"Sanford USD Medical Center, Avera McKennan, Avera Heart Hospital. Use the longest of the three.", t:"num", unit:"min", pre:"15", src:"Sanford USD 11 min, Avera McKennan 14 min, Avera Heart 10 min with no traffic."},
+    {k:"premier", q:"Denny Sanford Premier Center", t:"num", unit:"min", pre:"10", src:"8 min with no traffic, mostly I-29."},
+    {k:"mall", q:"Empire Mall", t:"num", unit:"min", pre:"8", src:"7 min with no traffic (2.4 mi)."},
+    {k:"falls", q:"Falls Park", t:"num", unit:"min", pre:"15", src:"12 min with no traffic (6.0 mi)."},
+    {k:"zoo", q:"Great Plains Zoo", t:"num", unit:"min", pre:"10", src:"8 min with no traffic (3.3 mi)."},
+    {k:"campus", q:"The Outdoor Campus", t:"num", unit:"min", pre:"8", src:"6 min with no traffic (2.7 mi)."},
+  ]},
+  {title:"Hotel services (only you can answer these)", hint:"These are about how the hotel runs, so they can't be looked up. Each one says how to find out.", items:[
+    {k:"hk", q:"How often is housekeeping?", sub:"Marriott.com says \"Every Other Day\" now.", how:"Ask the housekeeping lead what a guest gets by default on a stay of several nights.", t:"sel", opts:["Daily","Every Other Day","Twice Weekly","Weekly","On Request"]},
+    {k:"dry", q:"Do we offer valet or same-day dry cleaning?", how:"Guest laundry doesn't count. Yes only if we send guests' clothes out to be cleaned. Ask the front desk.", t:"yn"},
+    {k:"car", q:"Do we offer private car service or limousine/van service?", how:"The free local shuttle doesn't count. Yes only if we can book a private car or limo for a guest.", t:"yn"},
+    {k:"fax", q:"Is the fax line +1 605-361-2620 still working?", how:"Call it from your cell. A fax tone means Yes. Disconnected or a person answering means No.", t:"yn"},
+    {k:"roll", q:"Do we have rollaway beds or cribs for guests?", how:"Check housekeeping storage. Every suite has a sofa bed, so No is fine if we don't stock them.", t:"yn"},
+  ]},
+  {title:"Nearby places", hint:"Already filled in from online listings (checked 11/9/2026). A 2-minute call to any you're unsure of is the best check.", items:[
+    ...RESTS.map(([k,n]) => ({k:"r_"+k, q:n+" - still open?", t:"oc", pre:"Open", src:RSRC[k]})),
+    {k:"rubyPhone", q:"Ruby Tuesday's phone, if it isn't +1 605-275-2425", sub:"Leave blank if that number is right.", src:"Public listings show 605-275-2425, the same as Marriott.com, so this can stay blank.", t:"txt", optional:true},
+    {k:"bear", q:"Miles from the hotel to Great Bear Recreation Park", t:"num", unit:"mi", step:"0.1", pre:"7.0", src:"Straight-line, like the rest of the site (about 11.6 mi and 19 min by road)."},
+  ]},
+];
+const ALLF = FACTS.flatMap(g => g.items);
+ALLF.forEach(f => { if (f.pre !== undefined && S.facts[f.k] === undefined) S.facts[f.k] = f.pre; });
+const FLABEL = Object.fromEntries(ALLF.map(f => [f.k, f.q]));
+const has = k => S.facts[k] !== undefined && String(S.facts[k]).trim() !== "";
+const BLANKNAME = {hosp:"hospital minutes",premier:"Premier Center minutes",mall:"Empire Mall minutes",falls:"Falls Park minutes",zoo:"zoo minutes",campus:"Outdoor Campus minutes",fit:"gym name",fitDist:"gym miles",bear:"Great Bear miles",hk:"housekeeping"};
+
+/* fill {key} tokens -> {plain, html, missing[]} */
+function fill(t) {
+  const missing = []; let plain = "", html = "", last = 0;
+  t.replace(/\{(\w+)\}/g, (m, k, i) => {
+    plain += t.slice(last, i); html += esc(t.slice(last, i));
+    if (has(k)) { plain += S.facts[k]; html += esc(S.facts[k]); }
+    else { missing.push(k); plain += m; html += `<span class="blank">[${esc(BLANKNAME[k] || k)}]</span>`; }
+    last = i + m.length; return m;
+  });
+  plain += t.slice(last); html += esc(t.slice(last));
+  return {plain, html, missing};
+}
+
+/* ---------- Tasks ---------- */
+const DS = "Sales Messages >> Descriptions & Highlights";
+const HS = "Hotel Services >> Hotel Services";
+const RB = "Outlets >> Restaurants & Bars";
+const CUIS = RB + " >> Restaurant & Bar Details >> General Information >> Dining Experience >> Restaurant Cuisine";
+const ATT = "Area Information >> Attractions";
+const PASTE = ["Click in the field and press Ctrl+A so the old text is replaced.", "Press Copy below, then Ctrl+V to paste.", "Save."];
+const yn = (k, ifNo, ifYes) => f => !has(k) ? {wait:`Answer "${FLABEL[k]}" in Quick checks first.`} : (S.facts[k] === "No" ? ifNo : ifYes);
+
+const STEPS = [
+ {name:"Start here", overview:true},
+ {name:"Quick checks", facts:true},
+ {name:"Descriptions", mins:15, intro:"All five fields are on one screen. Do them in order.", tasks:[
+  {id:"pdl", rows:["O-1","S-1"], title:"Property Description Long (the welcome paragraph)", path:DS+" >> Property Description Long",
+   warn:"Don't change the heading above this field (\"Find your home away from home...\"). Marriott's SEO team controls it.", steps:PASTE,
+   texts:[{label:"Whole field", limit:1024, t:"TownePlace Suites by Marriott Sioux Falls is a pet-friendly extended stay hotel in Sioux Falls, SD, just off I-29. Every suite has a fully equipped kitchen, a work desk and high-speed Wi-Fi, so it works for a few nights or for weeks and months of corporate housing or temporary living. Every suite also has a sofa bed, so families and work teams have room to spread out. Enjoy our free hot breakfast each morning, relax in our pool area with a whirlpool, or keep up your routine in our 24-hour fitness center. Our complimentary guest laundry and local shuttle make longer stays easy. Catch a concert at the Denny Sanford Premier Center, walk the trails at Falls Park or visit the Great Plains Zoo, all a short drive away. Visiting a patient or working in healthcare? Sanford USD Medical Center, Avera McKennan and Avera Heart Hospital are each about {hosp} minutes away."}]},
+  {id:"lah", rows:["S-2","S-3"], title:"Local Area Highlights (the six \"Learn More\" tiles on Experiences)", path:DS+" >> Property Highlights >> Local Area Highlights",
+   steps:["There are 6 lines. Replace line 1 with text 1, line 2 with text 2, and so on.", "Never more than 6 lines.", "Save after the last line."],
+   texts:[
+    {label:"Line 1", limit:100, t:"Catch concerts and events at the Denny Sanford Premier Center, about {premier} minutes from the hotel"},
+    {label:"Line 2", limit:100, t:"Shop, dine and play at the Empire Mall, about {mall} minutes from our extended-stay suites"},
+    {label:"Line 3 (replaces the downtown line)", limit:100, t:"See the waterfalls and trails of Falls Park in downtown Sioux Falls, about {falls} minutes away"},
+    {label:"Line 4", limit:100, t:"Meet animals from seven continents at the Great Plains Zoo, about {zoo} minutes from the hotel"},
+    {label:"Line 5", limit:100, t:"Explore exhibits and 2+ miles of trails at The Outdoor Campus, about {campus} minutes away"},
+    {label:"Line 6 (replaces the Butterfly House line)", limit:100, t:"Visiting Sanford USD, Avera McKennan or Avera Heart Hospital? Each is about {hosp} minutes away"}]},
+  {id:"grh", rows:["K-1"], title:"Guest Room Highlights", path:DS+" >> Property Highlights >> Guest Room Highlights",
+   steps:["Read the lines that are there now.", "Put these 3 lines in as the first 3.", "Keep any other old line only if it's still true. 6 lines max.", "Save."],
+   texts:[
+    {label:"Line 1", limit:100, t:"Hotel suites in Sioux Falls, SD with a fully equipped kitchen in every suite"},
+    {label:"Line 2", limit:100, t:"Hotel rooms with a kitchen, sofa bed, work desk and free Wi-Fi for short or long stays"},
+    {label:"Line 3", limit:100, t:"Studio and one-bedroom suites sleep up to 6 - ideal for families and extended stays"}]},
+  {id:"loc", rows:["K-2"], title:"Description of Property Location", path:DS+" >> Description of Property Location", steps:PASTE,
+   texts:[{label:"Whole field", limit:255, t:"Pet-friendly extended stay hotel in Sioux Falls, SD, just off I-29, with full-kitchen suites, a free hot breakfast and an indoor pool."}]},
+  {id:"cap", rows:["K-3"], title:"Hotel Marketing Caption", path:DS+" >> Hotel Marketing Caption", steps:PASTE,
+   texts:[{label:"Whole field", limit:100, t:"Extended stay hotel in Sioux Falls, SD with full-kitchen suites and free hot breakfast"}],
+   note:"Skip the field called just \"Property Description\". It doesn't show anywhere."},
+ ]},
+ {name:"Hotel Services", mins:10, intro:"These are switches and pick-lists, not text. Your quick-check answers decide what to do.", tasks:[
+  {id:"bfast", rows:["O-13","D-9","S-5"], title:"Breakfast type", path:HS+" >> Food & Beverage Services",
+   steps:["Keep Hot breakfast turned on.", "Turn off Full American breakfast.", "Turn off Buffet breakfast.", "Save."],
+   note:"This also fixes the breakfast question in the FAQ on the Overview and Dining pages."},
+  {id:"hk", rows:["O-6"], title:"Housekeeping frequency", path:HS+" >> Housekeeping Services >> Room Specific",
+   when:f => !has("hk") ? {wait:"Answer the housekeeping question in Quick checks first."} : S.facts.hk === "Every Other Day" ? {skip:"No change needed. It already says Every Other Day."} : null,
+   stepsFn:() => [`Set housekeeping to "${S.facts.hk}".`, "Save."]},
+  {id:"dry", rows:["O-12"], title:"Dry cleaning", path:HS+" >> Housekeeping Services",
+   when:yn("dry", null, {skip:"No change needed. We offer dry cleaning, so leave it on."}),
+   steps:["Turn off Valet Dry Cleaning.", "Turn off Same Day Dry Cleaning.", "Leave guest laundry on.", "Save."]},
+  {id:"car", rows:["O-9"], title:"Car and limo service", path:HS+" >> Local Services and Limousine/Van Service Transportation",
+   when:yn("car", null, {skip:"No change needed. We offer car or limo service, so leave it on."}),
+   steps:["Turn off Private Car Service.", "Turn off Limousine/Van Service.", "Keep Local Shuttle - Complimentary on.", "Save."]},
+  {id:"fax", rows:["O-10"], title:"Fax number", path:HS+" >> Internet, Business & Fax Services",
+   when:f => !has("fax") ? {wait:"Answer the fax question in Quick checks first."} : S.facts.fax === "Yes" ? {skip:"No change needed. The fax line works."} : null,
+   steps:["Remove the fax number +1 605-361-2620.", "Save."], note:"If the fax number isn't on this screen, use \"Couldn't do it?\" below to say so."},
+ ]},
+ {name:"Room Amenities", mins:2, tasks:[
+  {id:"roll", rows:["A-6"], title:"Rollaway beds and cribs", path:"Room Amenities >> Bedding, Cribs & Roll-aways",
+   when:yn("roll", {skip:"No change needed. We don't have rollaways or cribs."}, null),
+   steps:["Mark rollaway beds as available.", "Mark cribs as available (if we have them).", "Save."],
+   note:"This changes the FAQ that now says rollaway beds aren't permitted."},
+ ]},
+ {name:"Restaurants", mins:10, rule:"Every nearby place must stay type Restaurant, never Bar, or it disappears from the site. Don't delete the on-site \"Complimentary Breakfast\" outlet. The Dining page only exists because of it.", tasks:[
+  {id:"d1", rows:["D-1"], title:"Breakfast description", path:RB+" >> Complimentary Breakfast >> General Information >> Marketing >> Short Description", steps:PASTE,
+   texts:[{label:"Whole field", limit:255, t:"Start your day with our free hot breakfast, featuring a variety of morning favorites. On the go? Simply let our team know in advance, and we'll prepare a convenient grab-and-go option for you."}]},
+  {id:"d1h", rows:["D-1"], title:"Breakfast hours", path:RB+" >> Complimentary Breakfast >> Details & Operations",
+   steps:["Enter the hours below.", "If our real hours are different, enter those instead.", "Save."],
+   texts:[{label:"Monday to Friday", t:"6:00 AM - 9:00 AM"},{label:"Saturday and Sunday", t:"7:00 AM - 10:00 AM"}]},
+  {id:"d2", rows:["D-2"], title:"Carnival Brazilian Grill: spelling and cuisine", path:RB+" >> Carnival Brazilian Grill >> Details",
+   steps:["Change the name to the text below.", "Then go to General Information >> Dining Experience >> Restaurant Cuisine and pick Steakhouse (or Brazilian, if it's in the list).", "Save."],
+   texts:[{label:"Name", t:"Carnaval Brazilian Grill"}]},
+  {id:"d4", rows:["D-4"], title:"Mama's Ladas: cuisine", path:CUIS+" (Mama's Ladas)", steps:["Pick Mexican from the list.", "Save."]},
+  {id:"d8", rows:["D-8"], title:"Grille 26 by Minervas: cuisine", path:CUIS+" (Grille 26 by Minervas)", steps:["Pick American from the list.", "Save."]},
+  {id:"d5", rows:["D-5"], title:"Minervas: description", path:RB+" >> Minervas >> General Information >> Marketing >> Short Description", steps:PASTE,
+   texts:[{label:"Whole field", limit:255, t:"Minervas is a downtown Sioux Falls restaurant and bar serving steaks, seafood and pasta. Closed Sundays."}]},
+  {id:"d6", rows:["D-6"], title:"Closed restaurants and Ruby Tuesday's phone", path:RB+" >> (each restaurant) >> Details",
+   when:() => { const miss = RESTS.filter(([k]) => !has("r_"+k)); if (miss.length) return {wait:"Answer the five \"still open?\" questions in Quick checks first."};
+     const closed = RESTS.filter(([k]) => S.facts["r_"+k] === "Closed"); return (!closed.length && !has("rubyPhone")) ? {skip:"No change needed. All five are open and the phone is right."} : null; },
+   stepsFn:() => { const s = RESTS.filter(([k]) => S.facts["r_"+k] === "Closed").map(([,n]) => `Remove ${n}.`);
+     if (has("rubyPhone") && S.facts.r_ruby !== "Closed") s.push(`Change Ruby Tuesday's phone to ${S.facts.rubyPhone}.`); s.push("Save."); return s; }},
+ ]},
+ {name:"Golf & Fitness", mins:5, intro:"Only change the part shown. Leave everything else on the record as it is.", tasks:[
+  {id:"e7", rows:["E-7"], title:"Prairie Green Golf Course: street address", path:"Outlets >> Golf >> Prairie Green", steps:["Replace the street line (it now says \"600 E. 0th St.\").", "Save."], texts:[{label:"Street", t:"600 E. 69th St."}]},
+  {id:"e8", rows:["E-8"], title:"Elmwood Golf Course: street address", path:"Outlets >> Golf >> Elmwood", steps:["Replace the street line (it now says \"Russell Ave\").", "Save."], texts:[{label:"Street", t:"2604 W. Russell St."}]},
+  {id:"e9", rows:["E-9"], title:"Willow Run Golf Course: course details", path:"Outlets >> Golf >> Willow Run", steps:["Set the holes, yards and par to the numbers below.", "Save."],
+   texts:[{label:"Holes", t:"18"},{label:"Yards", t:"6520"},{label:"Par", t:"70"}]},
+  {id:"e11", rows:["E-11"], title:"Nearby gym", path:"Outlets >> Fitness Centers >> Sanford Wellness Center",
+   steps:["Open the nearby record called \"Sanford Wellness Center\" (2.2 miles away).", "Delete it.", "Don't touch our own on-site fitness center record.", "Save."],
+   note:"Why: we have our own 24-hour fitness center and an indoor pool, so we shouldn't send guests to an off-site gym. That building has also been renamed (it's now the City's Westside Recreation Center), so the listing is out of date anyway."},
+ ]},
+ {name:"Attractions", mins:8, rule:"Keep each place's type as attraction or landmark, or it stops showing on the site.", tasks:[
+  {id:"e1", rows:["E-1"], title:"St. Joseph Cathedral: name and address", path:ATT+" >> St. Joseph Cathedral", steps:["Replace the name, the street and the state.", "Save."],
+   texts:[{label:"Name", t:"Cathedral of Saint Joseph"},{label:"Street", t:"521 N. Duluth Ave"},{label:"State (it now says SC)", t:"SD"}]},
+  {id:"e3", rows:["E-3"], title:"Catfish Bay: street address", path:ATT+" >> Catfish Bay Water Ski & Stage Show", steps:["Replace the street (it now says \"I-90 and Cliff Ave\").", "Save."], texts:[{label:"Street", t:"5500 N. Show Place"}]},
+  {id:"e13", rows:["E-13"], title:"Great Plains Zoo: name", path:ATT+" >> Great Plains Zoo/Delbridge", steps:["Replace the name. The Delbridge museum has closed.", "Save."], texts:[{label:"Name", t:"Great Plains Zoo"}]},
+  {id:"e14", rows:["E-14"], title:"Butterfly House listed three times", path:ATT, steps:["Delete \"Sertoma Butterfly House\".", "Delete \"Sertoma Park\".", "Keep \"Butterfly House & Aquarium\".", "Save."]},
+  {id:"e15", rows:["E-15"], title:"Shoto-Teien Japanese Gardens: street address", path:ATT+" >> Shoto-Teien Japanese Gardens", steps:["Replace the street (it now says \"Second Street & Grange Ave\").", "Save."], texts:[{label:"Street", t:"707 N. Grange Ave"}]},
+  {id:"e10", rows:["E-10"], title:"Great Bear Recreation Park: add details", path:ATT+" >> Great Bear Recreation Park",
+   when:f => !has("bear") ? {wait:"Answer the Great Bear miles question in Quick checks first."} : null,
+   steps:["Add the distance, description and address below.", "Save."], note:"If it isn't under Attractions, look in Area Information >> Recreation.",
+   texts:[{label:"Distance (miles)", t:"{bear}"},{label:"Description", limit:255, t:"City-owned ski, snowboard and snow-tubing area on the east side of Sioux Falls."},{label:"Street", t:"5901 E. Rice St."},{label:"ZIP", t:"57110"}]},
+ ]},
+ {name:"Report & check", report:true},
+];
+const TASKS = STEPS.flatMap((s, i) => (s.tasks || []).map(t => Object.assign(t, {step:i})));
+const FACTS_TAB = STEPS.findIndex(s => s.facts);
+const ACT = {
+  pdl:["Replace the welcome paragraph (Property Description Long)","High"], lah:["Replace the 6 \"Learn More\" tiles (Local Area Highlights)","High"],
+  grh:["Add 3 keyword lines to Guest Room Highlights"], loc:["Replace the Description of Property Location"], cap:["Replace the Hotel Marketing Caption"],
+  bfast:["Turn off Full American and Buffet breakfast, keep Hot","High"], hk:["Set the housekeeping frequency"], dry:["Turn off the two dry cleaning services"],
+  car:["Turn off private car and limo service"], fax:["Remove the dead fax number"], roll:["Mark rollaway beds and cribs as available"],
+  d1:["Replace the breakfast description","High"], d1h:["Add the breakfast hours","High"], d2:["Fix Carnaval's spelling, set cuisine to Steakhouse"],
+  d4:["Set Mama's Ladas cuisine to Mexican"], d8:["Set Grille 26 cuisine to American"], d5:["Replace the Minervas description"],
+  d6:["Remove any closed restaurants"], e7:["Fix Prairie Green's street (69th St.)"], e8:["Fix Elmwood's street (Russell St.)"],
+  e9:["Fix Willow Run's yards and par"], e11:["Delete the off-site gym listing (keep our own fitness center)"], e1:["Fix the cathedral's name, street and state (SC to SD)"],
+  e3:["Fix Catfish Bay's street address"], e13:["Remove \"Delbridge\" from the zoo's name"], e14:["Delete the 2 duplicate Butterfly House entries"],
+  e15:["Fix Shoto-Teien's street address"], e10:["Add Great Bear's distance, description and address"],
+};
+TASKS.forEach(t => { const a = ACT[t.id]; if (a) { t.title = a[0]; t.pri = a[1] || ""; } });
+const CHECKS = [
+  {k:"hk", act:"Ask the housekeeping lead how often rooms are cleaned on longer stays"},
+  {k:"dry", act:"Ask the front desk if we send guests' clothes out for dry cleaning"},
+  {k:"car", act:"Confirm whether we can book a private car or limo for a guest"},
+  {k:"fax", act:"Call 605-361-2620 from your cell to see if the fax line works"},
+  {k:"roll", act:"Check housekeeping storage for rollaway beds and cribs"},
+];
+
+const textsOf = t => (t.textsFn ? t.textsFn() : t.texts) || [];
+function stateOf(t) { const w = t.when ? t.when() : null; return w || {}; }
+function isDone(t) { const s = stateOf(t); return !!s.skip || (!s.wait && !!S.done[t.id]); }
+
+/* ---------- Render ---------- */
+const $main = document.getElementById("main"), $tabs = document.getElementById("tabs");
+
+function renderTabs() {
+  $tabs.innerHTML = STEPS.map((s, i) => {
+    let n = "";
+    if (s.tasks) { const d = s.tasks.filter(isDone).length; n = `<span class="n">${d}/${s.tasks.length}</span>`;
+      return `<button class="tab${d === s.tasks.length ? " complete" : ""}" role="tab" id="tab${i}" aria-selected="${i === S.tab}" data-i="${i}">${esc(s.name)}${n}</button>`; }
+    if (s.facts) { const need = ALLF.filter(f => !f.optional && !has(f.k)).length; n = `<span class="n">${need ? need + " left" : "✓"}</span>`;
+      return `<button class="tab${need ? "" : " complete"}" role="tab" id="tab${i}" aria-selected="${i === S.tab}" data-i="${i}">${esc(s.name)}${n}</button>`; }
+    return `<button class="tab" role="tab" id="tab${i}" aria-selected="${i === S.tab}" data-i="${i}">${esc(s.name)}</button>`;
+  }).join("");
+  const d = TASKS.filter(isDone).length;
+  document.getElementById("progtext").textContent = `${d} of ${TASKS.length} done`;
+  document.getElementById("meter").style.width = (100 * d / TASKS.length) + "%";
+}
+$tabs.addEventListener("click", e => { const b = e.target.closest(".tab"); if (b) go(+b.dataset.i); });
+
+function go(i) { S.tab = i; save(); renderTabs(); renderPanel(); window.scrollTo({top: 0}); document.getElementById("tab" + i)?.scrollIntoView({block:"nearest", inline:"nearest"}); }
+
+function navHtml(i) {
+  return `<div class="nav">${i > 0 ? `<button type="button" data-go="${i-1}">Back</button>` : "<span></span>"}${i < STEPS.length - 1 ? `<button type="button" class="next" data-go="${i+1}">Next: ${esc(STEPS[i+1].name)}</button>` : ""}</div>`;
+}
+
+function factInput(f) {
+  const v = S.facts[f.k] ?? "";
+  if (f.t === "num") return `<span><input type="number" min="0" step="${f.step || 1}" id="f_${f.k}" data-k="${f.k}" value="${esc(v)}" inputmode="decimal"><span class="unit">${f.unit}</span></span>`;
+  if (f.t === "txt") return `<input type="text" id="f_${f.k}" data-k="${f.k}" value="${esc(v)}" placeholder="+1 605-___-____">`;
+  if (f.t === "sel") return `<select id="f_${f.k}" data-k="${f.k}"><option value="">Choose...</option>${f.opts.map(o => `<option${o === v ? " selected" : ""}>${esc(o)}</option>`).join("")}</select>`;
+  const opts = f.t === "yn" ? ["Yes","No"] : ["Open","Closed"];
+  return `<span class="seg" role="radiogroup" aria-label="${esc(f.q)}">${opts.map(o => `<label><input type="radio" name="f_${f.k}" id="f_${f.k}_${o}" data-k="${f.k}" value="${o}"${v === o ? " checked" : ""}>${o}</label>`).join("")}</span>`;
+}
+
+function renderFacts(i) {
+  const order = [1, 0, 2];
+  $main.innerHTML = `<div class="panel-head"><h2>Quick checks</h2><p>Your answers go straight into the texts and decide which switches to change. Most are already filled in (green notes say where each came from). <b>Only the 5 hotel-service questions need you.</b> Nothing goes to Marriott from this page.</p></div>
+  <div class="facts">${order.map(gi => FACTS[gi]).map((g, n) => `${n ? `<details class="fgroup"><summary><h3>Already filled in: ${esc(g.title)}</h3><span class="note">Open to check or change</span></summary>` : `<section class="fgroup"><h3>${esc(g.title)}</h3>`}${g.hint ? `<p class="note" style="margin:-4px 0 6px">${esc(g.hint)}</p>` : ""}
+    ${g.items.map(f => `<div class="fact${!f.optional && !has(f.k) ? " missing" : ""}" data-row="${f.k}"><label class="q" for="${f.t === "yn" || f.t === "oc" ? "" : "f_" + f.k}">${esc(f.q)}${f.sub ? `<small>${esc(f.sub)}</small>` : ""}${f.src ? `<small class="src">Filled in for you: ${esc(f.src)}</small>` : ""}${f.how ? `<small class="how">How to find out: ${esc(f.how)}</small>` : ""}</label>${factInput(f)}</div>`).join("")}${n ? "</details>" : "</section>"}`).join("")}</div>${navHtml(i)}`;
+  $main.querySelectorAll("[data-k]").forEach(el => el.addEventListener(el.type === "radio" || el.tagName === "SELECT" ? "change" : "input", () => {
+    S.facts[el.dataset.k] = el.value.trim(); save();
+    const row = $main.querySelector(`[data-row="${el.dataset.k}"]`); const f = ALLF.find(x => x.k === el.dataset.k);
+    row.classList.toggle("missing", !f.optional && !has(f.k)); renderTabs();
+  }));
+}
+
+function copyBox(tx, key) {
+  const r = fill(tx.t), len = r.plain.length, over = tx.limit && len > tx.limit;
+  const counter = tx.limit ? `<span class="count${over ? " over" : ""}">${len} / ${tx.limit} characters</span>` : "";
+  const btn = r.missing.length ? `<button class="copy" type="button" disabled title="Answer Quick checks first">Answer Quick checks first</button>`
+                               : `<button class="copy" type="button" data-copy="${key}">Copy</button>`;
+  return `<div class="copybox"><div class="copybox-head"><span>${esc(tx.label)}${counter ? " · " + counter : ""}</span>${btn}</div><pre id="pre_${key}">${r.html}</pre></div>`;
+}
+
+function renderTasks(i) {
+  const s = STEPS[i];
+  const scr = STEPS.filter(x => x.tasks), num = scr.indexOf(s) + 1, left = s.tasks.filter(t => !isDone(t)).length;
+  $main.innerHTML = `<div class="panel-head"><div class="panel-top"><h2>${esc(s.name)}</h2>${TASKS.some(t => !isDone(t)) ? `<button type="button" class="linkbtn" data-next>Next unfinished task</button>` : ""}</div><p>Product Catalog screen ${num} of ${scr.length}. ${left ? `${left} left here.` : "All done here."}${s.intro ? " " + esc(s.intro) : ""}</p></div>
+  ${s.rule ? `<p class="rule"><b>Rule for this screen:</b> ${esc(s.rule)}</p>` : ""}
+  <div class="cards">${s.tasks.map(t => {
+    const st = stateOf(t), done = isDone(t);
+    const steps = t.stepsFn && !st.wait && !st.skip ? t.stepsFn() : t.steps;
+    let body;
+    if (st.wait) body = `<div class="status wait">${esc(st.wait)} <a href="#" data-go="${FACTS_TAB}">Go to Quick checks</a></div>`;
+    else if (st.skip) body = `<div class="status skip">${esc(st.skip)}</div>`;
+    else body = `${t.warn ? `<p class="rule"><b>Careful:</b> ${esc(t.warn)}</p>` : ""}${steps ? `<ol class="steps">${steps.map(x => `<li>${esc(x)}</li>`).join("")}</ol>` : ""}
+      ${textsOf(t).map((tx, j) => copyBox(tx, t.id + "_" + j)).join("")}
+      ${t.note ? `<p class="note">${esc(t.note)}</p>` : ""}
+      <details class="problem"${S.notes[t.id] ? " open" : ""}><summary>Couldn't do it?</summary><input type="text" id="n_${t.id}" data-note="${t.id}" value="${esc(S.notes[t.id] || "")}" placeholder="What went wrong, e.g. field not there"></details>`;
+    const check = st.wait ? "" : st.skip ? `<span class="chip ok">No change needed</span>` : `<label class="check"><input type="checkbox" data-done="${t.id}" id="d_${t.id}"${S.done[t.id] ? " checked" : ""}>Done</label>`;
+    const toggle = `<button type="button" class="linkbtn tgl" data-toggle="${t.id}"${done ? "" : " hidden"}>Show</button>`;
+    return `<article class="card${done ? " done" : ""}" id="card_${t.id}"><div class="card-top"><div class="card-title"><div class="rows">${t.pri ? `<span class="pri">High priority</span>` : ""}${t.rows.map(r => `<span class="row">Excel row ${r}</span>`).join("")}</div><h3>${esc(t.title)}</h3></div><div class="card-side">${check}${toggle}</div></div>
+      <div class="card-body"><div class="path"><span>Go to</span>${esc(t.path)}</div>${body}</div></article>`;
+  }).join("")}</div>${navHtml(i)}`;
+}
+
+function renderReport(i) {
+  $main.innerHTML = `<div class="panel-head"><h2>Send the report, then check the live site</h2><p>Marriott takes up to 72 hours to publish changes. Send the report today, and do the live check in 3 days.</p></div>
+  <section class="fgroup"><h3>Send the report</h3><p class="note" style="margin:0 0 10px">Type your name, press Copy, and paste it into an email or text back. Then, in the Excel, type DONE and today's date in the "Done?" column (column P) for each row marked done here.</p>
+  <div class="fact" style="border-top:0"><label class="q" for="f_name">Your name</label><input type="text" id="f_name" value="${esc(S.name || "")}"></div>
+  <div class="copybox-head" style="border-radius:8px 8px 0 0;margin-top:8px"><span>Report</span><button class="copy" type="button" id="copyReport">Copy report</button></div>
+  <textarea id="report" readonly aria-label="Report"></textarea></section>
+  <section class="fgroup" id="livecheck" style="margin-top:18px"><h3>In 3 days: check the live site</h3>
+  <ol class="steps live"><li>Open each page and press Ctrl+Shift+R to reload it fresh.</li>
+  <li>Press Ctrl+F and search for each old word. Each one should find nothing.
+    <ul><li><a href="https://www.marriott.com/en-us/hotels/fsdts-towneplace-suites-sioux-falls/overview/" target="_blank" rel="noopener">Overview</a>: <span class="kw">continental</span> <span class="kw">Full American</span> <span class="kw">Dry Cleaning</span> <span class="kw">Limousine</span></li>
+    <li><a href="https://www.marriott.com/en-us/hotels/fsdts-towneplace-suites-sioux-falls/dining/" target="_blank" rel="noopener">Dining</a>: <span class="kw">Carnival</span> <span class="kw">Eclectic</span></li>
+    <li><a href="https://www.marriott.com/en-us/hotels/fsdts-towneplace-suites-sioux-falls/experiences/" target="_blank" rel="noopener">Experiences</a>: <span class="kw">Deluth</span> <span class="kw">0th St</span> <span class="kw">Delbridge</span> <span class="kw">Sertoma</span></li></ul></li>
+  <li>Some text sits behind "See More" and "View All". Click those open before you search.</li>
+  <li>Anything still showing after 3 days: add it to the report and send it again.</li></ol></section>
+  <div class="skiplist"><p><b>Leave the grey SKIP rows in the Excel alone.</b> Those 18 items aren't in Product Catalog, so they're being handled separately.</p></div>
+  <div class="nav"><button type="button" class="ghost" id="reset">Clear my ticks and notes</button></div>${navHtml(i)}`;
+  const $reset = document.getElementById("reset"); let armT;
+  $reset.addEventListener("click", () => {
+    if (!$reset.classList.contains("armed")) { $reset.classList.add("armed"); $reset.textContent = "Click again to clear (answers are kept)"; armT = setTimeout(() => { $reset.classList.remove("armed"); $reset.textContent = "Clear my ticks and notes"; }, 4000); return; }
+    clearTimeout(armT); S.done = {}; S.notes = {}; save(); renderTabs(); renderPanel();
+  });
+  const $r = document.getElementById("report");
+  const build = () => {
+    const L = [`FSDTS Product Catalog update - ${new Date().toLocaleDateString()}${S.name ? " - " + S.name : ""}`, "", `${TASKS.filter(isDone).length} of ${TASKS.length} done.`, "", "ANSWERS"];
+    ALLF.forEach(f => L.push(`- ${f.q}: ${has(f.k) ? S.facts[f.k] + (f.unit ? " " + f.unit : "") : (f.optional ? "(no change)" : "NOT ANSWERED")}`));
+    const grp = {done:[], skip:[], open:[], prob:[]};
+    TASKS.forEach(t => { const st = stateOf(t), lab = `${t.rows.join("/")} ${t.title}`;
+      if (st.skip) grp.skip.push(lab); else if (!st.wait && S.done[t.id]) grp.done.push(lab); else grp.open.push(lab);
+      if (S.notes[t.id]) grp.prob.push(`${lab}: ${S.notes[t.id]}`); });
+    L.push("", "DONE", ...grp.done.map(x => "- " + x), "", "NO CHANGE NEEDED", ...grp.skip.map(x => "- " + x), "", "NOT DONE YET", ...(grp.open.length ? grp.open.map(x => "- " + x) : ["- none"]), "", "PROBLEMS", ...(grp.prob.length ? grp.prob.map(x => "- " + x) : ["- none"]));
+    const now = new Date(), day = `${now.getMonth() + 1}/${now.getDate()}/${now.getFullYear()}`;
+    const ROWS = [...new Set(TASKS.flatMap(t => t.rows))];
+    L.push("", "EXCEL ROWS (send this part back as is; it fills the Done? column)");
+    ROWS.forEach(r => { const ts = TASKS.filter(t => t.rows.includes(r)), prob = ts.map(t => S.notes[t.id]).filter(Boolean);
+      const st = prob.length ? `PROBLEM | ${prob.join("; ")}` : !ts.every(isDone) ? "NOT DONE" : ts.every(t => stateOf(t).skip) ? `NO CHANGE NEEDED | ${day}` : `DONE | ${day}`;
+      L.push(`${r} | ${st}`); });
+    $r.value = L.join("\n");
+  };
+  build();
+  document.getElementById("f_name").addEventListener("input", e => { S.name = e.target.value; save(); build(); });
+  document.getElementById("copyReport").addEventListener("click", e => doCopy($r.value, e.currentTarget, $r));
+}
+
+function chip(t) {
+  const st = stateOf(t);
+  if (st.skip) return `<span class="chip ok">No change needed</span>`;
+  if (st.wait) return `<span class="chip wait">Needs a quick check</span>`;
+  return S.done[t.id] ? `<span class="chip ok">Done</span>` : `<span class="chip todo">To do</span>`;
+}
+function renderOverview(i) {
+  const editTabs = STEPS.map((s, j) => [s, j]).filter(([s]) => s.tasks);
+  const total = editTabs.reduce((a, [s]) => a + s.mins, 0);
+  const left = TASKS.filter(t => !isDone(t)).length;
+  const started = Object.values(S.done).some(Boolean);
+  const cta = !left ? `<button type="button" class="primary" data-go="${STEPS.length - 1}">Send the report</button>`
+    : started ? `<button type="button" class="primary" data-next>Continue: next unfinished task</button>`
+    : `<button type="button" class="primary" data-go="${FACTS_TAB}">Start Part 1: Quick checks</button>`;
+  $main.innerHTML = `<div class="panel-head"><div class="panel-top"><h2>Your action list</h2>${cta}</div><p>${left ? `${left} things left to do.` : "Everything is done. Send the report."} About an hour and 15 minutes in total. Do the four parts in order, and tap any line to go straight to it.</p></div>
+  <div class="before"><b>Before you start</b><ul>
+    <li><b>Product Catalog</b> is Marriott's tool for the hotel's web content. Open the Island browser, sign in with your Marriott login and open Product Catalog for FSDTS. If you can't get in, stop and tell the person who sent you this page.</li>
+    <li><b>The Excel</b> is <code>FSDTS Meeting - Where To Update (with links and photos).xlsx</code>. Each card here has a tag like "Excel row O-1". Find that ID in column A to see a screenshot of what's wrong now.</li>
+    <li>You can stop at any time. This page remembers your progress in this browser.</li></ul></div>
+  <div class="parts">
+  <section class="part"><div class="part-head"><h3>Part 1: Quick checks</h3><span class="mins">10 min</span></div>
+    <p class="note">The online lookups are done. These five need someone at the hotel.</p>
+    <ul class="alist">${CHECKS.map(c => `<li><a href="#" data-go="${FACTS_TAB}" data-card="row_${c.k}">${has(c.k) ? `<span class="chip ok">Answered: ${esc(S.facts[c.k])}</span>` : `<span class="chip todo">To do</span>`}<span>${esc(c.act)}</span></a></li>`).join("")}
+    <li><a href="#" data-go="${FACTS_TAB}" data-card="row_r_granite"><span class="chip opt">Optional</span><span>Call Granite City (605-362-0000) to confirm it's still open</span></a></li></ul></section>
+  <section class="part"><div class="part-head"><h3>Part 2: Product Catalog changes (6 screens)</h3><span class="mins">about ${total} min</span></div>
+    <p class="note">One tab per Product Catalog screen. Short on time? Do the High lines first.</p>
+    ${editTabs.map(([s, j]) => `<div class="screen"><div class="screen-head"><b>${esc(s.name)}</b><span>${s.tasks.filter(isDone).length}/${s.tasks.length} · ${s.mins} min</span></div>
+      <ul class="alist">${s.tasks.map(t => `<li><a href="#" data-go="${j}" data-card="card_${t.id}">${chip(t)}<span>${esc(t.title)}${t.pri ? ` <span class="pri">High</span>` : ""}</span></a></li>`).join("")}</ul></div>`).join("")}</section>
+  <section class="part"><div class="part-head"><h3>Part 3: Send the report</h3><span class="mins">2 min</span></div>
+    <ul class="alist"><li><a href="#" data-go="${STEPS.length - 1}"><span class="chip todo">Today</span><span>Copy the report and send it back, then type DONE and the date in the Excel's "Done?" column</span></a></li></ul></section>
+  <section class="part"><div class="part-head"><h3>Part 4: Check the live site in 3 days</h3><span class="mins">10 min</span></div>
+    <ul class="alist"><li><a href="#" data-go="${STEPS.length - 1}" data-card="livecheck"><span class="chip todo">In 3 days</span><span>Search the Overview, Dining and Experiences pages for the old words, and report anything still showing</span></a></li></ul></section>
+  </div>
+  <div class="nav"><span></span>${cta}</div>`;
+}
+function renderPanel() { const s = STEPS[S.tab]; document.getElementById("intro").hidden = !s.overview; s.overview ? renderOverview(S.tab) : s.facts ? renderFacts(S.tab) : s.report ? renderReport(S.tab) : renderTasks(S.tab); }
+
+function doCopy(text, btn, el) {
+  const ok = () => { const o = btn.textContent; btn.textContent = "Copied"; btn.classList.add("copied"); setTimeout(() => { btn.textContent = o; btn.classList.remove("copied"); }, 1600); };
+  const fallback = () => { if (el.select) el.select(); else { const r = document.createRange(); r.selectNodeContents(el); const s = getSelection(); s.removeAllRanges(); s.addRange(r); } btn.textContent = "Press Ctrl+C"; };
+  try { navigator.clipboard.writeText(text).then(ok, fallback); } catch (e) { fallback(); }
+}
+
+const smooth = () => matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth";
+function jumpTo(t) { go(t.step); const c = document.getElementById("card_" + t.id); if (c) c.scrollIntoView({block:"start", behavior:"auto"}); }
+function nextTask() { return TASKS.find(t => !isDone(t) && !stateOf(t).wait) || TASKS.find(t => !isDone(t)); }
+$main.addEventListener("click", e => {
+  if (e.target.closest("[data-next]")) { const t = nextTask(); if (t) jumpTo(t); else go(STEPS.length - 1); return; }
+  const tg = e.target.closest("[data-toggle]");
+  if (tg) { const c = document.getElementById("card_" + tg.dataset.toggle); const o = c.classList.toggle("open"); tg.textContent = o ? "Hide" : "Show"; return; }
+  const g = e.target.closest("[data-go]"); if (g) { e.preventDefault(); go(+g.dataset.go); const id = g.dataset.card || ""; const c = id && (document.getElementById(id) || document.querySelector(`[data-row="${id.replace(/^row_/, "")}"]`)); if (c) { const d = c.closest("details"); if (d) d.open = true; c.scrollIntoView({block:"center"}); } return; }
+  const c = e.target.closest("[data-copy]");
+  if (c) { const [id, j] = c.dataset.copy.split(/_(?=\d+$)/); const t = TASKS.find(x => x.id === id); doCopy(fill(textsOf(t)[+j].t).plain, c, document.getElementById("pre_" + c.dataset.copy)); }
+});
+$main.addEventListener("change", e => {
+  const d = e.target.dataset.done; if (!d) return;
+  S.done[d] = e.target.checked; save();
+  const card = document.getElementById("card_" + d), tg = card.querySelector(".tgl");
+  card.classList.toggle("done", e.target.checked); card.classList.remove("open"); tg.hidden = !e.target.checked; tg.textContent = "Show"; renderTabs();
+  if (e.target.checked) { const nx = card.nextElementSibling && [...card.parentElement.children].slice([...card.parentElement.children].indexOf(card) + 1).find(c => !c.classList.contains("done")); if (nx) nx.scrollIntoView({block:"start", behavior:smooth()}); }
+});
+$main.addEventListener("input", e => { const n = e.target.dataset.note; if (n !== undefined) { S.notes[n] = e.target.value; save(); } });
+
+if (!(S.tab >= 0 && S.tab < STEPS.length)) S.tab = 0;
+renderTabs(); renderPanel(); document.getElementById("tab" + S.tab)?.scrollIntoView({block:"nearest", inline:"nearest"});
+</script>
